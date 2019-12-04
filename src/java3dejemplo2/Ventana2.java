@@ -1,18 +1,44 @@
 
 package java3dejemplo2;
 
+import com.panamahitek.ArduinoException;
+import com.panamahitek.PanamaHitek_Arduino;
+import java.util.LinkedList;
 import java.util.Timer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.media.j3d.Transform3D;
 import javax.vecmath.Vector3f;
+import jssc.SerialPortEvent;
+import jssc.SerialPortEventListener;
+import jssc.SerialPortException;
 
 public class Ventana2 extends javax.swing.JFrame  {
-
+    //objetos para el control de arduino
+     PanamaHitek_Arduino arduinoRobot;
+    String mensaje;
+    LinkedList cola;
+    //Objetos para java
     CuboCanvas3D cubo;
     Timer timer;
     ModeloCinematico modeloCinematico;
 
     public Ventana2() {
         initComponents();
+        //inicializacion de objetos
+        cola = new LinkedList();
+        arduinoRobot = new PanamaHitek_Arduino();
+        System.out.println("Puertos Disponibles " + arduinoRobot.getSerialPorts() );//mensaje consola de usuario
+        //Verificacion puerto
+        try {
+            arduinoRobot.arduinoRXTX("COM3", 9600, evento);
+            System.out.println("Puerto Conectado");
+            
+        } catch (ArduinoException ex) {
+            Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("NO SE CONECTO");
+        }
+        //Iniacilizacion java
         cubo = new CuboCanvas3D(jPanel1);
         timer = new Timer();
         modeloCinematico = new ModeloCinematico(cubo);
@@ -21,7 +47,23 @@ public class Ventana2 extends javax.swing.JFrame  {
          
 
     }
-
+//atributo para utilizar arduino
+    SerialPortEventListener evento = new SerialPortEventListener() {
+        @Override
+        public void serialEvent(SerialPortEvent arg0) {//metodo para utilizar arduino, recibe datos
+           //excepciones
+            try {
+                if (arduinoRobot.isMessageAvailable()) {
+                    mensaje = arduinoRobot.printMessage();
+                   // System.out.println("Mensaje recibido :" + mensaje);
+                    cola.add(mensaje);
+                                    }
+            } catch (SerialPortException | ArduinoException ex) {
+                Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+            
+};
       @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -29,16 +71,12 @@ public class Ventana2 extends javax.swing.JFrame  {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jRadioButton4 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton3 = new javax.swing.JRadioButton();
-        jLabel4 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        jRadioButton5 = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addKeyListener(new java.awt.event.KeyAdapter() {
@@ -54,11 +92,6 @@ public class Ventana2 extends javax.swing.JFrame  {
 
         jLabel3.setFont(new java.awt.Font("Vivaldi", 3, 36)); // NOI18N
         jLabel3.setText("Sumo Bluetooth");
-
-        jLabel2.setText("Nota: la velocidad es de 1 a 10.");
-
-        jLabel1.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
-        jLabel1.setText("Velocidad");
 
         jButton1.setBackground(new java.awt.Color(102, 0, 255));
         jButton1.setFont(new java.awt.Font("Verdana", 1, 11)); // NOI18N
@@ -96,8 +129,9 @@ public class Ventana2 extends javax.swing.JFrame  {
         jRadioButton3.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         jRadioButton3.setText("Derecha");
 
-        jLabel4.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
-        jLabel4.setText("Velocidad");
+        jRadioButton5.setBackground(new java.awt.Color(51, 102, 255));
+        jRadioButton5.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        jRadioButton5.setText("Stop");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -111,34 +145,20 @@ public class Ventana2 extends javax.swing.JFrame  {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel3)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jRadioButton2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jRadioButton3))
-                            .addComponent(jLabel3))))
-                .addContainerGap(20, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                            .addComponent(jRadioButton4)
-                            .addGap(111, 111, 111))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                    .addComponent(jLabel1)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(21, 21, 21))
-                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                    .addComponent(jLabel4)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(18, 18, 18)))
-                            .addComponent(jButton1)
-                            .addGap(7, 7, 7)))))
+                                .addGap(13, 13, 13)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jRadioButton4)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jRadioButton5)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                                        .addComponent(jRadioButton3))))))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(100, 100, 100)
+                        .addComponent(jButton1)))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -150,26 +170,13 @@ public class Ventana2 extends javax.swing.JFrame  {
                 .addGap(10, 10, 10)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jRadioButton2)
-                    .addComponent(jRadioButton3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jRadioButton3)
+                    .addComponent(jRadioButton5))
+                .addGap(10, 10, 10)
                 .addComponent(jRadioButton4)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1)
-                        .addGap(67, 67, 67))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(50, 50, 50)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2)
-                        .addGap(25, 25, 25))))
+                .addGap(43, 43, 43)
+                .addComponent(jButton1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -180,15 +187,14 @@ public class Ventana2 extends javax.swing.JFrame  {
                 .addGap(11, 11, 11)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 466, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(11, 11, 11))
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -199,34 +205,64 @@ public class Ventana2 extends javax.swing.JFrame  {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // cubo.setRotarY(Math.toRadians(Double.parseDouble(jTextField1.getText()))); 
         //cubo.setTransladarY(Float.parseFloat(jTextField1.getText())); 
+        //declaración e incialización de variables para el envio de datos al arduino
+       
+        String enviar = null;
         
-        try {
-            modeloCinematico.setWr(Float.parseFloat(jTextField1.getText()));// TODO add your handling code here:
-            modeloCinematico.setWl(Float.parseFloat(jTextField2.getText()));
-        } catch (Exception e) {
-            System.err.println("Inserte valor");
-        }
+           /* modeloCinematico.setWr(Float.parseFloat(jTextField1.getText()));// TODO add your handling code here:
+            modeloCinematico.setWl(Float.parseFloat(jTextField2.getText()));*/
+        
         System.out.println(modeloCinematico.getTheta());
         System.out.println("xf: "+modeloCinematico.getXf()+" yf: "+modeloCinematico.getYf());
-        /*if(jRadioButton1.isSelected()){
-            modeloCinematico.setTheta(0);
-            modeloCinematico.setTheta0(0);
+        try {/*dependiento de los valoresingresados en los jtextfield, el programa los lee y dependiendo
+            las condiciones enviar un String por bluetoot, el cual esta oreviamente declarado en el arduino */
+            
+            if(jRadioButton1.isSelected()) {//adelante
+                modeloCinematico.setWr(Float.parseFloat("1"));// TODO add your handling code here:
+                modeloCinematico.setWl(Float.parseFloat("1"));
+                jRadioButton1.setSelected(false);
+                enviar="a";
+           
+            } else if(jRadioButton2.isSelected()) {// izquierda
+                modeloCinematico.setWr(Float.parseFloat("0"));// TODO add your handling code here:
+                modeloCinematico.setWl(Float.parseFloat("1"));
+                jRadioButton2.setSelected(false);
+                enviar="b";
+            }
+            
+            else if (jRadioButton3.isSelected()){// derecha
+                modeloCinematico.setWr(Float.parseFloat("1"));// TODO add your handling code here:
+                modeloCinematico.setWl(Float.parseFloat("0"));
+                jRadioButton3.setSelected(false);
+                    enviar="d"; 
+                    }
+            
+            
+            else if (jRadioButton4.isSelected()){//atras
+                modeloCinematico.setWr(Float.parseFloat("-1"));// TODO add your handling code here:
+                modeloCinematico.setWl(Float.parseFloat("-1"));
+                jRadioButton4.setSelected(false);
+                    enviar="e"; 
+                    }
+            
+            else if (jRadioButton5.isSelected()) { //parar
+                modeloCinematico.setWr(Float.parseFloat("0"));// TODO add your handling code here:
+                modeloCinematico.setWl(Float.parseFloat("0"));
+                jRadioButton5.setSelected(false);
+                enviar="c";
+            }
+             
+            arduinoRobot.sendData(enviar);//envio de datos hacia el arduino
+            Thread.sleep(500);//tiempo de espera en el arduino
+            
+        } catch (ArduinoException | SerialPortException | InterruptedException ex) {//excepción
+            Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
         }
-        else if(jRadioButton2.isSelected()){
-            modeloCinematico.setTheta(Math.toDegrees(-Math.PI / 2.0d));
-            modeloCinematico.setTheta0(-Math.PI / 2.0d);
-        }
-        else if(jRadioButton3.isSelected()){
-            modeloCinematico.setTheta(Math.toDegrees(Math.PI / 2.0d));
-            modeloCinematico.setTheta0(Math.PI / 2.0d);
-        }
-        else if(jRadioButton4.isSelected()){
-            modeloCinematico.setTheta(Math.toDegrees(Math.PI));
-            modeloCinematico.setTheta0(Math.PI);
-        }
-        else{
-            modeloCinematico.setTheta(0);
-        }*/
+        System.err.println(cola);
+        String data1 = (String) cola.peek();
+        cola.poll();
+        String data2 = (String)cola.peek();
+        cola.poll();
         
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -279,17 +315,13 @@ public class Ventana2 extends javax.swing.JFrame  {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JRadioButton jRadioButton4;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JRadioButton jRadioButton5;
     // End of variables declaration//GEN-END:variables
 }
